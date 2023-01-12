@@ -1,6 +1,6 @@
 # Bet Spreads
 
-Finds arbitrage markets for a given player using indicative odds as the metric
+Finds arbitrage markets for a given player using indicative odds as the metric.
 
 This code is written in Python and uses the pandas, nba_api libraries.
 The code utilizes the NBA API to retrieve player information and game logs for a given player.
