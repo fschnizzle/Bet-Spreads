@@ -1,4 +1,5 @@
 import pandas as pd
+import requests
 import time
 from nba_api.stats.static import players
 from nba_api.stats.endpoints import playergamelog
@@ -30,7 +31,27 @@ def get_percent_greater_than_or_equal_to(df: pd.DataFrame, column_name: str, x: 
 
     # Returns % of rows in column greater than or equal to x
     return (num_rows / df.shape[0]) * 100
+"""
+Name Database 
+"""
 
+# Make a GET request to the NBA API to retrieve the list of players
+response = requests.get('https://data.nba.net/prod/v1/2022/players.json')
+
+# Check if the request was successful
+if response.status_code == 200:
+    # Convert the response JSON to a Python dictionary
+    data = response.json()
+
+    # Extract the list of players' names
+    players = []
+    for player in data['league']['standard']:
+        full_name = player['firstName'] + ' ' + player['lastName']
+        players.append(full_name)
+
+    # Save the list of players' names to a local file
+    with open('nba_players.txt', 'w') as f:
+        f.write('\n'.join(players))
 
 """
 Main
@@ -66,20 +87,24 @@ def main():
                     i_10 = round(100/(p_10+0.01),2)
 
                     # Display Market details
-                    if indicative_odds > 1.00 and i_10 < 1.35:
+                    if indicative_odds > 1.00 and i_10 < 1.40:
                         print('\n{} {}: {} ({})'.format(x, column_name, i_10, indicative_odds))
         elif choice == 's':
             # Show game logs
             # player_name = input("Enter player name: ")
             # player_id = get_player_id(player_name)['id']
             # game_logs_df = get_game_logs(player_id)
-            print(game_logs_df)
+            print("".join(['-' for _ in range(80)]))
+            print(f"Game Logs for {player_name}:")
+            print(game_logs_df.to_string())
+            print("".join(['-' for _ in range(80)]))
         else:
             print("Invalid choice. Please enter 'n' or 's'.")
 
+        print("".join(['-' for _ in range(80)]))
         choice = input("Analyse new player ('n') or Show game logs ('s'): ")
-    print("\n")
-    print(game_logs_df)
+
+    
 """
 Call to main function
 """
